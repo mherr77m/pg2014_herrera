@@ -29,10 +29,8 @@ def read_dat(filename):
 	dt_form = '%Y-%m-%d'
 	dt = []
 	dc = []
-	while True:
-		line = f.readline()
-		if not line: break
-		elif (line[0] != '#'):
+	for line in f.readlines():	
+		if (line[0] != '#'):
 			temp = line.split('\t')
 			dt.append(datetime.datetime.strptime(temp[2],dt_form).date())
 			dc.append(temp[3].split('_')[0])
