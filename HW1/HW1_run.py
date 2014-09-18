@@ -28,7 +28,7 @@ print 'integrate(f,dx=0.5): ',hw.integrate(f,dx=0.5)
 # 3.  Write a function to read the data from the file discharge.dat, 
 #    return a list of dates (as datetime objects) and discharge (ignoring any flags).
 
-filename = '/Users/Michael/Documents/ocng689/pg2014/HW1/discharge.dat'
+filename = 'discharge.dat'
 date,discharge = hw.read_dat(filename)
 
 print '\nProblem 3:'
@@ -38,9 +38,10 @@ for i in range(0,10):
 
 # 4. Write a function to read data from the file drifter.dat.  Return a dictionary based on the track name as indices, returning a list of lat/lon pairs:
 
-filename = '/Users/Michael/Documents/ocng689/pg2014/HW1/drifter.dat'
+filename = 'drifter.dat'
 tracks = hw.read_drifter(filename)
 
 print '\nProblem 4:'
 print 'tracks[''FRODO''] :',tracks['FRODO']
 print 'tracks[''STRIDER''] :',tracks['STRIDER']
+print 'tracks[''ACTIVE LOG 003''] :',tracks['ACTIVE LOG 003']

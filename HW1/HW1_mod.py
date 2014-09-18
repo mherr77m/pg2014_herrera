@@ -48,9 +48,7 @@ def read_drifter(filename):
 		line = f.readline()
 		if not line: break
 		temp = line.split('\t')
-		if (temp[0] == 'Waypoint'):
-			keys.append(temp[1])
-		elif (temp[0] == 'Track') and (temp[1] in keys):
+		if (temp[0] == 'Track'):
 			flag = True
 			latlon = []
 			while True:
