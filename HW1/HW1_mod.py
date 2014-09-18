@@ -41,6 +41,7 @@ def read_drifter(filename):
 	# Get each waypoint from the beginning of the file,
 	# then reads through the file until it finds data for the waypoint.
 	# Puts the lat, lon data into a dictionary for each waypoint key. 
+	
 	f = open(filename,'r')
 	data = {}
 	keys = []
@@ -55,8 +56,19 @@ def read_drifter(filename):
 				line2 = f.readline()
 				temp2 = line2.split('\t')
 				if (temp2[0] == 'Trackpoint'):
-					lat = temp2[1].split(' ')[1]
-					lon = temp2[1].split(' ')[3]
+					coords = temp2[1].split()
+					if (coords[0][0] == 'N'):
+						hemi1 = 1
+					else:
+						hemil = -1
+					if (coords[2][0] == 'E'):
+						hemi2 = 1
+					else:
+						hemi2 = -1
+					lat = hemi1*(int(coords[0][1:]) + float(coords[1])/60.0)
+					lon = hemi2*(int(coords[2][1:]) + float(coords[3])/60.0)	
+					lat = "%.3f" % lat
+					lon = "%.3f" % lon
 					latlon.append((lat,lon))
 					flag = False
 				elif (flag == False): break
