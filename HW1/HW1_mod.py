@@ -85,7 +85,7 @@ def read_drifter(filename):
 			else:
 				hemi2 = -1
 			lat = hemi1*(int(coords[0][1:]) + float(coords[1])/60.0)
-			lon = hemi2*(int(coords[0][1:]) + float(coords[3])/60.0)
+			lon = hemi2*(int(coords[2][1:]) + float(coords[3])/60.0)
 			lat = "%.3f" % lat
 			lon = "%.3f" % lon
 			latlon.append((lat,lon))
