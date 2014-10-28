@@ -1,80 +1,22 @@
+# !env Python
 # Michael Herrera
-# Functions for Homework 2
-# OCNG 689
+# 10/18/14
+# HW2, Problems 4 & 6
+'''
+Create a class to read discharge data for the Brazos river from this page:
+Store date (as an array of datetime objects) and discharge data (an array of floating point
+numbers, converted to cubic meters per second) as attributes within the class.
 
+Create methods to:
+
+ - Extract a year of discharge data. Return dates and discharges for the specified year.
+ - Plot the hydrograph over the entire length of the timeseries.
+ - Get a mean annual timeseries. Return the mean annual hydrograph with dates given for some arbitrary (specified) year.
+ - Create a plot of a given year with mean discharge and variability. Plot the given year as a red line. Plot the annual mean hydrograph as a black line. Plot a grey shaded region around the black line representing one standard deviation about the mean (use the plt.fill() command for this).
+'''
 import numpy as np
-import math
 import datetime
 import matplotlib.pyplot as plt
-from mpl_toolkits.basemap import Basemap
-
-def distance(array1,array2):
-    """
-    Calculates the distance between all points in two
-    arrays.  The arrays don't have to be the same size.
-    Each array has the form [[x1,y1],[x2,y2],...,[xn,yn]]
-    """
-	
-    # Use array broadcasting in the distance formula to 
-    # allow for arrays of different sizes
-    dist = np.sqrt((array1[:,0,np.newaxis] - array2[:,0])**2 + \
-                   (array1[:,1,np.newaxis] - array2[:,1])**2)
-    return dist
-
-class Point(object):
-    """
-    Defines a Point object as a point in space.
-    Attributes:
-        x - x coordinate
-        y - y coordinate
-    Methods:
-        distance - Calculates the distance between two
-                   points.
-        rotate - Rotates the point by a specified number
-                 of radians around another point.
-    """
-
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-
-    def __add__(self,other):
-        return Point(self.x+other.x, self.y+other.y)
-
-    def __sub__(self,other):
-        return Point(self.x-other.x, self.y-other.y)
-
-    def __str__(self):
-        return '(%.2f, %.2f)' % (self.x, self.y)
-
-    def __repr__(self):
-        return 'Point(%.2f, %.2f)' % (self.x, self.y)
-
-    def distance(self, p=None):
-        if p is None:
-            p = Point(0.0, 0.0)
-        
-        return math.sqrt((p.x - self.x)**2 + (p.y - self.y)**2)
-
-    def rotate(self, angle, p=None):
-        if p is None:
-            p = Point(0.0, 0.0)
-
-        p_temp = self - p
-        self.x = p.x + p_temp.x * math.cos(-angle) - \
-                 p_temp.y * math.sin(-angle)
-        self.y = p.y + p_temp.x * math.sin(-angle) + \
-                 p_temp.y * math.cos(-angle)
-
-def high_pass(x, y, n = 1):
-    """
-    High pass filter.  Takes x,y data as input and removes 
-    the trend from the data based on a polynomial function
-    of the given order, default is linear.
-    """
-    psol = np.polynomial.Polynomial.fit(x, y, n)
-    new_y = psol(x)
-    return y - new_y
 
 class Brazos(object):
     """
@@ -181,47 +123,20 @@ class Brazos(object):
         plt.xticks(dates[idx],[datetime.datetime.strftime(dates[i],dt_form) for i in idx])
         plt.savefig(savename)
 
-def plot_topo(filename,savename):
-    """
-    Reads in the topography/bathemetry text file and plots the data.
-    """
-    f = open(filename,'r')
+if __name__ == '__main__':
+    bd = Brazos('brazos_discharge.dat')
+    years,dcs = bd.year_data(1998)
+    savename = 'Full_Time_Series.pdf'
+    bd.plot_all(savename)
+    print "\nPlot for problem 4 has been saved as "+savename+"\n"
 
-    lon=[]
-    lat=[]
-    topo=[]
-    for line in f.readlines():
-        temp = line.split()
-        if (float(temp[0]) == -180.0):
-            lat.append(float(temp[1]))
-        if (float(temp[1]) == -90.0):
-            lon.append(float(temp[0]))
-        topo.append(float(temp[2]))
+    year = 2012
+    savename = 'Mean_Annual_Discharge_'+str(year)+'.pdf'
+    bd = Brazos('brazos_discharge.dat')
+    years,dcs = bd.year_data(year)
+    mean_data, std_data = bd.get_series(year)
+    bd.plot_series(years,mean_data,dcs,std_data,savename)
+    print "\nPlot for problem 6 has been saved as "+savename+"\n"
 
-    topo = np.array(topo).reshape((len(lat),len(lon)))
 
-    lons,lats = np.meshgrid(lon,lat)
-
-    m = Basemap(projection='cyl',
-                llcrnrlon=-180,
-                urcrnrlon=180,
-                llcrnrlat=-90,
-                urcrnrlat=90)
-
-    x,y = m(lons,lats)
-
-    fig = plt.figure(figsize=(10,5))
-    m.drawmeridians(np.arange(-180,181,30),labels=[1,0,0,1])
-    m.drawparallels(np.arange(-90,91,30), labels=[0,1,1,0])
-
-    pcm = m.pcolormesh(x,y,topo,cmap='RdBu_r',vmin=-6000,vmax=6000)
-    m.contour(x,y,topo,[-1000,0,1000],colors='k',linewidths=[.5, 1, .5])
-    
-    cax = fig.add_axes([0.68, 0.17, 0.14, 0.02])
-    cb = plt.colorbar(pcm, cax=cax, orientation='horizontal',ticks=[-6000,-3000,0,3000,6000])
-    cb.set_label('Topography/Bathymetry [m]',fontsize=6)
-    xtl = cax.get_xticklabels()
-    for foo in xtl:
-        foo.set_fontsize(6)
-    plt.savefig(savename,dpi=600)
 

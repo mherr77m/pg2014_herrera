@@ -1,9 +1,0 @@
-Michael Herrera
-Homework 2
-OCNG 689
-
-All of the functions required for the homework are written in
-the script HW2_mod.py.  There is an idividual run script for 
-each problem where q1 means question 1, q2 means question 2, etc.
-All of the problems which require plotting, the plot is saved instead
-of being displayed.
