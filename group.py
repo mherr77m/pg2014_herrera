@@ -25,17 +25,19 @@ pcm=plt.pcolormesh(x,y,sst,cmap=plt.cm.spring)
 m.drawmeridians(np.arange(-180,121,20),labels=[1,0,0,1])
 m.drawparallels(np.arange(0,91,20), labels=[0,1,1,0])
 m.drawcountries()
-cax = fig.add_axes([0.3, 0.85, 0.2, 0.02])
+cax = fig.add_axes([0.28, 0.85, 0.25, 0.03])
 cb = plt.colorbar(pcm, cax=cax, orientation='horizontal',ticks=range(0,33,8))
-cb.set_label('Sea Surface Temperature [C]',fontsize=8)
+cb.set_label('Sea Surface Temperature [C]',fontsize=10)
+#plt.title('January 1st, Climatology')
+fig.text(.57,.03,'January 1st, Climatology',fontsize=18)
 
 xtl = cax.get_xticklabels()
 
 for foo in xtl:
-    foo.set_fontsize(8)
+    foo.set_fontsize(10)
 
 
-plt.savefig('test.png')
+plt.savefig('test2.png',dpi=400)
 
 
 
